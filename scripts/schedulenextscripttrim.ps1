@@ -6,8 +6,10 @@ if ( -not (Test-Path $ctrlfilepath -PathType Leaf)) {
     $text = "schedulenextscripttrim.ps1 started at: $(Get-Date)"
     $text | Out-File -Encoding ASCII -Append -FilePath $ctrlfilepath
     # Define System variables
-    $ScheduleNextScriptDir = "${env:SystemDrive}\buildscripts\1-ScheduleNextScript"
     $nextscript = "firstrdsh"
+    $ScheduleNextScriptDir = "${env:SystemDrive}\buildscripts\1-ScheduleNextScript"
+    $scriptsource = "https://raw.githubusercontent.com/ewierschke/ra/wip/scripts/"
+    $getscript = "${scriptsource}${nextscript}.ps1"
 
     # Begin Script
     # Create the ScheduleNextScript log directory
@@ -18,7 +20,7 @@ if ( -not (Test-Path $ctrlfilepath -PathType Leaf)) {
     [int]$Retrycount = "0"
     do {
         try {
-            Invoke-Webrequest "https://raw.githubusercontent.com/ewierschke/ra/wip/scripts/${nextscript}.ps1" -Outfile "${ScheduleNextScriptDir}\${nextscript}.ps1";
+            Invoke-Webrequest "${getscript}" -Outfile "${ScheduleNextScriptDir}\${nextscript}.ps1";
             Write-Host "Downloaded next script"
             $Stoploop = $true
             }

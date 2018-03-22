@@ -8,6 +8,8 @@ $ScriptName = $MyInvocation.mycommand.name
 $ErrorActionPreference = "Stop"
 $credspath = "${env:SystemDrive}\buildscripts"
 $nextscript = "winwatchwcleanup"
+$scriptsource = "https://raw.githubusercontent.com/ewierschke/ra/wip/scripts/"
+$getscript = "${scriptsource}${nextscript}.ps1"
 
 # Define Functions
 function log {
@@ -108,7 +110,7 @@ try {
 
 # Get the next script
 log -LogTag ${ScriptName} "Downloading ${nextscript}.ps1"
-Invoke-Webrequest "https://raw.githubusercontent.com/ewierschke/ra/wip/scripts/${nextscript}.ps1" -Outfile "${ConfigureRDSHDir}\${nextscript}.ps1";
+Invoke-Webrequest "${getscript}" -Outfile "${ConfigureRDSHDir}\${nextscript}.ps1";
 
 # Do the work
 #[CmdLetBinding()]

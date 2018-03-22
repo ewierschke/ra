@@ -7,6 +7,8 @@ $FirstRDSHLogFile = "${FirstRDSHLogDir}\firstrdsh-log_${DateTime}.txt"
 $ScriptName = $MyInvocation.mycommand.name
 $ErrorActionPreference = "Stop"
 $nextscript = "configure-rdsh"
+$scriptsource = "https://raw.githubusercontent.com/ewierschke/ra/wip/scripts/"
+$getscript = "${scriptsource}${nextscript}.ps1"
 
 # Define Functions
 function log {
@@ -107,7 +109,7 @@ try {
 
 # Get the next script
 log -LogTag ${ScriptName} "Downloading ${nextscript}.ps1"
-Invoke-Webrequest "https://raw.githubusercontent.com/ewierschke/ra/wip/scripts/${nextscript}.ps1" -Outfile "${FirstRDSHDir}\${nextscript}.ps1";
+Invoke-Webrequest "${getscript}" -Outfile "${FirstRDSHDir}\${nextscript}.ps1";
 
 # Do the work
 #Install RDSH features
