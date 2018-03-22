@@ -108,7 +108,7 @@ try {
 
 # Get the next script
 log -LogTag ${ScriptName} "Downloading ${nextscript}.ps1"
-Invoke-Webrequest "https://raw.githubusercontent.com/ewierschke/armtemplates/runwincustdata/scripts/${nextscript}.ps1" -Outfile "${ConfigureRDSHDir}\${nextscript}.ps1";
+Invoke-Webrequest "https://raw.githubusercontent.com/ewierschke/ra/wip/scripts/${nextscript}.ps1" -Outfile "${ConfigureRDSHDir}\${nextscript}.ps1";
 
 # Do the work
 #[CmdLetBinding()]

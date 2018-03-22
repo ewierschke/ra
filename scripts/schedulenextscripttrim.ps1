@@ -18,7 +18,7 @@ if ( -not (Test-Path $ctrlfilepath -PathType Leaf)) {
     [int]$Retrycount = "0"
     do {
         try {
-            Invoke-Webrequest "https://raw.githubusercontent.com/ewierschke/armtemplates/runwincustdata/scripts/${nextscript}.ps1" -Outfile "${ScheduleNextScriptDir}\${nextscript}.ps1";
+            Invoke-Webrequest "https://raw.githubusercontent.com/ewierschke/ra/wip/scripts/${nextscript}.ps1" -Outfile "${ScheduleNextScriptDir}\${nextscript}.ps1";
             Write-Host "Downloaded next script"
             $Stoploop = $true
             }

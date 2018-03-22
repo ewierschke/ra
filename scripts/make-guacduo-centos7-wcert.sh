@@ -70,7 +70,7 @@ usage()
   Usage:  ${__ScriptName} [options]
 
   Note:
-  If no options are specified, then Guacamole v${__GuacVersion} will be
+  If no options are specified, then Guacamole ${__GuacVersion} will be
   installed, but it will not be configured and users will not be able to
   authenticate. Specify -H (and associated options) to configure LDAP
   authentication. Specify -G (and associated options) to configure file-based
