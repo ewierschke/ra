@@ -1,12 +1,12 @@
 # Define System variables
-$FirstRDSHDir = "${env:SystemDrive}\buildscripts\2-FirstRDSH"
-$FirstRDSHLogDir = "${FirstRDSHDir}\Logs"
-$LogSource = "FirstRDSH"
+$SecondRDSHDir = "${env:SystemDrive}\buildscripts\2-SecondRDSH"
+$SecondRDSHLogDir = "${SecondRDSHDir}\Logs"
+$LogSource = "SecondRDSH"
 $DateTime = $(get-date -format "yyyyMMdd_HHmm_ss")
-$FirstRDSHLogFile = "${FirstRDSHLogDir}\firstrdsh-log_${DateTime}.txt"
+$SecondRDSHLogFile = "${SecondRDSHLogDir}\SecondRDSH-log_${DateTime}.txt"
 $ScriptName = $MyInvocation.mycommand.name
 $ErrorActionPreference = "Stop"
-$nextscript = "secondrdsh"
+$nextscript = "configure-rdsh"
 $scriptsource = "https://raw.githubusercontent.com/ewierschke/ra/wip/scripts/"
 $getscript = "${scriptsource}${nextscript}.ps1"
 
@@ -84,15 +84,15 @@ function Set-OutputBuffer($Width=10000) {
 }
 
 # Begin Script
-# Create the FirstRDSH log directory
-New-Item -Path $FirstRDSHDir -ItemType "directory" -Force 2>&1 > $null
-New-Item -Path $FirstRDSHLogDir -ItemType "directory" -Force 2>&1 > $null
+# Create the SecondRDSH log directory
+New-Item -Path $SecondRDSHDir -ItemType "directory" -Force 2>&1 > $null
+New-Item -Path $SecondRDSHLogDir -ItemType "directory" -Force 2>&1 > $null
 # Increase the screen width to avoid line wraps in the log file
 Set-OutputBuffer -Width 10000
 # Start a transcript to record script output
-Start-Transcript $FirstRDSHLogFile
+Start-Transcript $SecondRDSHLogFile
 
-# Create a "FirstRDSH" event log source
+# Create a "SecondRDSH" event log source
 try {
     New-EventLog -LogName Application -Source "${LogSource}"
 } catch {
@@ -109,12 +109,18 @@ try {
 
 # Get the next script
 log -LogTag ${ScriptName} "Downloading ${nextscript}.ps1"
-Invoke-Webrequest "${getscript}" -Outfile "${FirstRDSHDir}\${nextscript}.ps1";
+Invoke-Webrequest "${getscript}" -Outfile "${SecondRDSHDir}\${nextscript}.ps1";
 
 # Do the work
-#Install RDSH features
-log -LogTag ${ScriptName} "Installing RDSH features"
-powershell.exe "Install-WindowsFeature RDS-RD-Server,RDS-Licensing -Verbose";
+# Add Windows features
+$null = Install-WindowsFeature @(
+    "RDS-RD-Server"
+    "RDS-Licensing"
+    "Search-Service"
+    "Desktop-Experience"
+    "RSAT-ADDS-Tools"
+    "GPMC"
+)
 
 # Remove previous scheduled task (if it exists)
 log -LogTag ${ScriptName} "Unregistering previous scheduled task"
@@ -130,7 +136,7 @@ $msg = "Please upgrade Powershell and try again."
 
 $taskname = "RunNextScript"
 if ($PSVersionTable.psversion.major -ge 4) {
-    $A = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-ExecutionPolicy Bypass ${FirstRDSHDir}\${nextscript}.ps1"
+    $A = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-ExecutionPolicy Bypass ${SecondRDSHDir}\${nextscript}.ps1"
     $T = New-ScheduledTaskTrigger -AtStartup
     $P = New-ScheduledTaskPrincipal -UserId "NT AUTHORITY\SYSTEM" -RunLevel "Highest" -LogonType "ServiceAccount"
     $S = New-ScheduledTaskSettingsSet
