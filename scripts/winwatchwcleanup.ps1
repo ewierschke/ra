@@ -16,7 +16,8 @@ param (
 #$ie = new-object -com "InternetExplorer.Application"
 #$ie.navigate("http://s3.amazonaws.com/app-chemistry/files/")
 
-$BootstrapUrl = "https://raw.githubusercontent.com/ewierschke/watchmaker/bootstrap/docs/files/bootstrap/watchmaker-bootstrap.ps1"
+#$BootstrapUrl = "https://raw.githubusercontent.com/ewierschke/watchmaker/bootstrap/docs/files/bootstrap/watchmaker-bootstrap.ps1"
+$BootstrapUrl = "https://raw.githubusercontent.com/plus3it/watchmaker/master/docs/files/bootstrap/watchmaker-bootstrap.ps1"
 $PythonUrl = "https://www.python.org/ftp/python/3.6.4/python-3.6.4-amd64.exe"
 $PypiUrl = "https://pypi.org/simple"
 
@@ -28,7 +29,9 @@ $BootstrapFile = "${Env:Temp}\$(${BootstrapUrl}.split('/')[-1])"
 & "$BootstrapFile" -PythonUrl "$PythonUrl" -Verbose -ErrorAction Stop
 
 # Install watchmaker
-pip install --build "${Env:Temp}" --index-url="$PypiUrl" --upgrade pip setuptools watchmaker
+#pip install --build "${Env:Temp}" --index-url="$PypiUrl" --upgrade pip setuptools watchmaker
+python -m pip install --index-url="$PypiUrl" --upgrade pip<10 setuptools
+pip install --build "${Env:Temp}" --index-url="$PypiUrl" --upgrade watchmaker
 
 # Run watchmaker
 watchmaker --no-reboot --log-level debug --log-dir=C:\Watchmaker\Logs ${WatchmakerParam} ${WatchmakerParam2}
