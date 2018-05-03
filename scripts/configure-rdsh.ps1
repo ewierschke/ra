@@ -108,9 +108,16 @@ try {
     }
 }
 
-# Get the next script
-log -LogTag ${ScriptName} "Downloading ${nextscript}.ps1"
-Invoke-Webrequest "${getscript}" -Outfile "${ConfigureRDSHDir}\${nextscript}.ps1";
+# Get the next script either from env:temp or from github
+$existingscript = "${Env:Temp}\winwatchwcleanup.ps1"
+if (Test-Path $existingscript -PathType Leaf) {
+    log -LogTag ${ScriptName} "Copying existing script ${nextscript}.ps1"
+    Copy-Item $existingscript -Destination "${ConfigureRDSHDir}\${nextscript}.ps1"
+} else {
+    log -LogTag ${ScriptName} "Downloading ${nextscript}.ps1"
+    Invoke-Webrequest "${getscript}" -Outfile "${ConfigureRDSHDir}\${nextscript}.ps1";
+}
+
 
 # Do the work
 #[CmdLetBinding()]
