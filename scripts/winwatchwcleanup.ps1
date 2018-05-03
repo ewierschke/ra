@@ -34,7 +34,7 @@ python -m pip install --index-url="$PypiUrl" --upgrade pip<10 setuptools
 pip install --build "${Env:Temp}" --index-url="$PypiUrl" --upgrade watchmaker
 
 # Run watchmaker
-watchmaker --no-reboot --log-level debug --log-dir=C:\Watchmaker\Logs ${WatchmakerParam} ${WatchmakerParam2}
+watchmaker --no-reboot --log-level debug --log-dir=C:\Watchmaker\Logs ${WatchmakerParam} ${WatchmakerParam2} --config="C:\Program Files\Python36\Lib\site-packages\watchmaker\static\config.yaml"
 
 if ($? -ne 'True') {
     $logfilepath = "${env:windir}\Temp\winwatchwcleanup-log.log"
