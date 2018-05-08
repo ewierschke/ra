@@ -51,6 +51,11 @@ if ($? -ne 'True') {
     if ($taskExists) {
         Unregister-ScheduledTask -TaskName ${taskName} -Confirm:$false;
     }
+    #removing webrole installed earlier for custom wam
+    $webroleinstalled = (Get-WindowsFeature | Where-Object {$_.Installed -eq $true -and $_.FeatureType -eq 'Role'} | Where-Object {$_.Name -Like "*Web-Server*"})
+    if ($webroleinstalled) {
+        Uninstall-WindowsFeature -Name Web-Server
+    }
 }
 
 gpupdate /force
