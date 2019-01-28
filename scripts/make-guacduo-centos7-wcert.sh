@@ -473,9 +473,9 @@ PWCRYPT=$( python -c "import random,string,crypt,getpass,pwd; \
            randomsalt = ''.join(random.sample(string.ascii_letters,8)); \
            print crypt.crypt('${SSH_PASSWORD}', '\$6\$%s))\$' % randomsalt)" )
 GUACPASS_MD5=$(__md5sum "${GUAC_PASSWORD}")
-GUAC_SOURCE="http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/"${GUAC_VERSION}"/source/"
-GUAC_BINARY="http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/"${GUAC_VERSION}"/binary/"
-GUAC_EXTENSIONS="http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/"${GUAC_VERSION}"/binary/"
+GUAC_SOURCE="https://archive.apache.org/dist/guacamole/"${GUAC_VERSION}"/source/"
+GUAC_BINARY="https://archive.apache.org/dist/guacamole/"${GUAC_VERSION}"/binary/"
+GUAC_EXTENSIONS="https://archive.apache.org/dist/guacamole/"${GUAC_VERSION}"/binary/"
 FREERDP_REPO="https://github.com/FreeRDP/FreeRDP"
 FREERDP_BRANCH="stable-1.1"
 ADDUSER="/usr/sbin/useradd"
