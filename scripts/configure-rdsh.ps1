@@ -147,6 +147,54 @@ if (-not $ServerFQDN)
     $ServerFQDN = $name
 }
 
+#Begin Test Addition
+$RequiredFeatures = @(
+    "RDS-RD-Server"
+    "RDS-Licensing"
+)
+
+$ExtraFeatures = @(
+  "Search-Service"
+  "RSAT-ADDS-Tools"
+  "GPMC"
+)
+
+$MissingFeatures = @()
+foreach ($Feature in (Get-WindowsFeature $RequiredFeatures))
+{
+    if (-not $Feature.Installed)
+    {
+        $MissingFeatures += $Feature.Name
+    }
+}
+if ($MissingFeatures)
+{
+    throw "Missing required Windows features: $($MissingFeatures -join ',')"
+}
+
+# Validate availability of RDS Licensing configuration
+$null = Import-Module RemoteDesktop,RemoteDesktopServices -Verbose:$false
+$TestPath = "RDS:\LicenseServer"
+if (-not (Get-ChildItem $TestPath -ErrorAction SilentlyContinue))
+{
+    throw "System needs to reboot to create the path: ${TestPath}"
+}
+
+# Get the system name
+$SystemName = [System.Net.DNS]::GetHostByName('').HostName
+
+# Install extra Windows features
+if ($ExtraFeatures)
+{
+    Install-WindowsFeature $ExtraFeatures
+}
+
+$RequiredRoles = @(
+    "RDS-RD-SERVER"
+)
+#End Test addition
+
+<# OLD SECTION
 # Add Windows features
 $null = Install-WindowsFeature @(
     "RDS-RD-Server"
@@ -184,6 +232,7 @@ if ($DomainNetBiosName -and $GroupName)
         $group.Add("WinNT://$DomainNetBiosName/$GroupName,group")
     }
 }
+#END OLD SECTION #>
 
 # Configure DNS registration
 $adapters = get-wmiobject -class Win32_NetworkAdapterConfiguration -filter "IPEnabled=TRUE"
