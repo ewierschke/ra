@@ -195,9 +195,9 @@ $RequiredRoles = @(
 #End Test addition #>
 
 #OLD SECTION
-$OSver = [System.Environment]::OSversion.Version
+$OSver = (Get-CimInstance Win32_OperatingSystem).version
 #Server 2012 R2
-if ($OSver.Major -eq 6)
+if ($OSver.Major -lt 10)
 {
 
      # Add Windows features
@@ -211,7 +211,7 @@ if ($OSver.Major -eq 6)
      )
 }
 #Server 2016+
-if ($OSver.Major -eq 10)
+if ($OSver.Major -gt 10)
 {
      # Add Windows features
      $null = Install-WindowsFeature @(
