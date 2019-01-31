@@ -66,7 +66,7 @@ function Set-OutputBuffer($Width=10000) {
            "hkcu:\console\%SystemRoot%_SysWOW64_WindowsPowerShell_v1.0_powershell.exe")
     # other titles are ignored
     foreach ($key in $keys) {
-        md $key -verbose -force
+        mkdir $key -verbose -force
         Set-RegistryValue $key FontSize 0x00050000
         Set-RegistryValue $key ScreenBufferSize 0x02000200
         Set-RegistryValue $key WindowSize 0x00200200
@@ -147,7 +147,7 @@ if (-not $ServerFQDN)
     $ServerFQDN = $name
 }
 
-#Begin Test Addition
+<# #Begin Test Addition
 $RequiredFeatures = @(
     "RDS-RD-Server"
     "RDS-Licensing"
@@ -192,9 +192,9 @@ if ($ExtraFeatures)
 $RequiredRoles = @(
     "RDS-RD-SERVER"
 )
-#End Test addition
+#End Test addition #>
 
-<# OLD SECTION
+#OLD SECTION
 # Add Windows features
 $null = Install-WindowsFeature @(
     "RDS-RD-Server"
@@ -216,7 +216,7 @@ if ($ActivationStatus.CurrentValue -eq 0)
 {
     Set-Item -Path RDS:\LicenseServer\ActivationStatus -Value 1 -ConnectionMethod AUTO -Reason 5 -ErrorAction Stop
 }
-$obj = gwmi -namespace "Root/CIMV2/TerminalServices" Win32_TerminalServiceSetting
+$obj = Get-WmiObject -namespace "Root/CIMV2/TerminalServices" Win32_TerminalServiceSetting
 $null = $obj.SetSpecifiedLicenseServerList("localhost")
 $null = $obj.ChangeMode(2)
 
@@ -225,14 +225,14 @@ if ($DomainNetBiosName -and $GroupName)
 {
     $group = [ADSI]"WinNT://$env:COMPUTERNAME/Remote Desktop Users,group"
     $groupmembers = @(@($group.Invoke("Members")) | `
-        foreach {$_.GetType().InvokeMember("Name", 'GetProperty', $null, $_, $null)})
+        ForEach-Object {$_.GetType().InvokeMember("Name", 'GetProperty', $null, $_, $null)})
 
     if ($groupmembers -notcontains $GroupName)
     {
         $group.Add("WinNT://$DomainNetBiosName/$GroupName,group")
     }
 }
-#END OLD SECTION #>
+#END OLD SECTION
 
 # Configure DNS registration
 $adapters = get-wmiobject -class Win32_NetworkAdapterConfiguration -filter "IPEnabled=TRUE"
@@ -242,7 +242,7 @@ $null = $adapters | foreach-object { $_.SetDynamicDNSRegistration($TRUE, $TRUE) 
 Set-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer -Name SmartScreenEnabled -ErrorAction Stop -Value "RequireAdmin" -Force
 
 # Set the Audio Service to start automatically, without failing if the service name cannot be found
-@(Get-Service -Name "audiosrv" -ErrorAction SilentlyContinue) | % { Set-Service -Name $_.Name -StartupType "Automatic" }
+@(Get-Service -Name "audiosrv" -ErrorAction SilentlyContinue) | ForEach-Object { Set-Service -Name $_.Name -StartupType "Automatic" }
 
 # Create public desktop shortcut for Windows Security
 $WindowsSecurityPath = "${env:SYSTEMDRIVE}\Users\Public\Desktop\Windows Security.lnk"
