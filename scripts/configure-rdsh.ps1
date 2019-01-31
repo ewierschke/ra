@@ -195,15 +195,34 @@ $RequiredRoles = @(
 #End Test addition #>
 
 #OLD SECTION
-# Add Windows features
-$null = Install-WindowsFeature @(
-    "RDS-RD-Server"
-    "RDS-Licensing"
-    "Search-Service"
-    "Desktop-Experience"
-    "RSAT-ADDS-Tools"
-    "GPMC"
-)
+$OSver = [System.Environment]::OSversion.Version
+#Server 2012 R2
+if ($OSver.Major -eq 6)
+{
+
+     # Add Windows features
+     $null = Install-WindowsFeature @(
+         "RDS-RD-Server"
+         "RDS-Licensing"
+         "Search-Service"
+         "Desktop-Experience"
+         "RSAT-ADDS-Tools"
+         "GPMC"
+     )
+}
+#Server 2016+
+if ($OSver.Major -eq 10)
+{
+     # Add Windows features
+     $null = Install-WindowsFeature @(
+         "RDS-RD-Server"
+         "RDS-Licensing"
+         "Search-Service"
+         "RSAT-ADDS-Tools"
+         "GPMC"
+     )
+}
+
 $null = Import-Module RemoteDesktop,RemoteDesktopServices
 
 # Configure RDS Licensing
