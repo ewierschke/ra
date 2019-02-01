@@ -87,8 +87,12 @@ function Set-OutputBuffer($Width=10000) {
 # Create the FirstRDSH log directory
 New-Item -Path $FirstRDSHDir -ItemType "directory" -Force 2>&1 > $null
 New-Item -Path $FirstRDSHLogDir -ItemType "directory" -Force 2>&1 > $null
-# Increase the screen width to avoid line wraps in the log file
-Set-OutputBuffer -Width 10000
+$OSver = (Get-CimInstance Win32_OperatingSystem).version
+if ($OSver.Major -lt 10)
+{
+     # Increase the screen width to avoid line wraps in the log file
+     Set-OutputBuffer -Width 10000
+}
 # Start a transcript to record script output
 Start-Transcript $FirstRDSHLogFile
 
