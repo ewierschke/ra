@@ -116,15 +116,33 @@ log -LogTag ${ScriptName} "Downloading ${nextscript}.ps1"
 Invoke-Webrequest "${getscript}" -Outfile "${SecondRDSHDir}\${nextscript}.ps1";
 
 # Do the work
-# Add Windows features
-$null = Install-WindowsFeature @(
-    "RDS-RD-Server"
-    "RDS-Licensing"
-    "Search-Service"
-    "Desktop-Experience"
-    "RSAT-ADDS-Tools"
-    "GPMC"
-)
+$OSver = (Get-CimInstance Win32_OperatingSystem).version
+#Server 2012 R2
+if ($OSver.Major -lt 10)
+{
+
+     # Add Windows features
+     $null = Install-WindowsFeature @(
+         "RDS-RD-Server"
+         "RDS-Licensing"
+         "Search-Service"
+         "Desktop-Experience"
+         "RSAT-ADDS-Tools"
+         "GPMC"
+     )
+}
+#Server 2016+
+if ($OSver.Major -gt 10)
+{
+     # Add Windows features
+     $null = Install-WindowsFeature @(
+         "RDS-RD-Server"
+         "RDS-Licensing"
+         "Search-Service"
+         "RSAT-ADDS-Tools"
+         "GPMC"
+     )
+}
 
 # Remove previous scheduled task (if it exists)
 log -LogTag ${ScriptName} "Unregistering previous scheduled task"
