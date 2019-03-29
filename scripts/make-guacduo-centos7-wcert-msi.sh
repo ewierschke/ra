@@ -1000,7 +1000,8 @@ CERT_MSI_SCRIPT=https://github.com/ewierschke/ra/blob/wip/scripts/msi-get-cert-a
 retry 5 wget --timeout=10 \
 "${CERT_MSI_SCRIPT}" -O /usr/local/bin/msi-get-cert-and-password-for-httpd.sh || \
 die "Could not download msi script file" 
-/usr/local/bin/msi-get-cert-and-password-for-httpd.sh -S ${CERTIFICATE_ZIP_URL} -C ${CERTIFICATE_KV_SECRET_URI} 
+chmod 755 /usr/local/bin/msi-get-cert-and-password-for-httpd.sh
+bash /usr/local/bin/msi-get-cert-and-password-for-httpd.sh -S ${CERTIFICATE_ZIP_URL} -C ${CERTIFICATE_KV_SECRET_URI} 
 
 
 # Start services
