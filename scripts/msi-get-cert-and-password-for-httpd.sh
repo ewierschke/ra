@@ -114,7 +114,7 @@ cd /usr/local/bin
 
 # adjust /etc/httpd/conf.d/ssl.conf
 sed -i.certfilebak "s|SSLCertificateFile.*|SSLCertificateFile /usr/local/bin/cert.crt|g" /etc/httpd/conf.d/ssl.conf
-sed -i.keyfilebak "s|SSLCertificateKeyFile.*|SSSLCertificateKeyFile /usr/local/bin/cert.key|g" /etc/httpd/conf.d/ssl.conf
+sed -i.keyfilebak "s|SSLCertificateKeyFile.*|SSLCertificateKeyFile /usr/local/bin/cert.key|g" /etc/httpd/conf.d/ssl.conf
 
 # restart httpd
 service httpd restart

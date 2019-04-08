@@ -995,13 +995,19 @@ then
     fi
 fi
 
-#get real certificate zip and configure httpd
-CERT_MSI_SCRIPT=https://github.com/ewierschke/ra/blob/wip/scripts/msi-get-cert-and-password-for-httpd.sh
-retry 5 wget --timeout=10 \
-"${CERT_MSI_SCRIPT}" -O /usr/local/bin/msi-get-cert-and-password-for-httpd.sh || \
-die "Could not download msi script file" 
-chmod 755 /usr/local/bin/msi-get-cert-and-password-for-httpd.sh
-bash /usr/local/bin/msi-get-cert-and-password-for-httpd.sh -S ${CERTIFICATE_ZIP_URL} -C ${CERTIFICATE_KV_SECRET_URI} 
+one=1
+if ( [[ "${USE_MSI}" == "${one}" ]] )
+then
+    #get real certificate zip and configure httpd
+    CERT_MSI_SCRIPT=https://raw.githubusercontent.com/ewierschke/ra/wip/scripts/msi-get-cert-and-password-for-httpd.sh
+    retry 5 wget --timeout=10 \
+    "${CERT_MSI_SCRIPT}" -O /usr/local/bin/msi-get-cert-and-password-for-httpd.sh || \
+    die "Could not download msi script file" 
+    chmod 755 /usr/local/bin/msi-get-cert-and-password-for-httpd.sh
+    bash /usr/local/bin/msi-get-cert-and-password-for-httpd.sh -C ${CERTIFICATE_ZIP_URL} -S ${CERTIFICATE_KV_SECRET_URI} 
+else
+    log "USE_MSI parameter not set, not configuring real certificate"
+fi
 
 
 # Start services
