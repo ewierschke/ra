@@ -910,7 +910,7 @@ then
 fi
 
 # Adjust firewalld
-firewall-offline-cmd --zone=public --permanent --add-service=https
+#firewall-offline-cmd --zone=public --permanent --add-service=https
 firewall-offline-cmd --zone=public --add-service=https
 service firewalld start
 setenforce 0 && firewall-cmd --zone=public --permanent --add-service=https && setenforce 1
