@@ -4,7 +4,7 @@
 #
 #
 #################################################################
-__ScriptName="msi-get-cert-and-password-for-httpd.sh"
+__ScriptName="msi-get-ldaps-pub-cert.sh"
 
 log()
 {
@@ -26,29 +26,29 @@ usage()
 
   Options:
   -h  Display this message.
-  -S  URI of the secret to use to unzip the certificate file.
-  -C  URI of the certificate file (zip) to use on httpd.
+  -C  URI of the public certificate file (crt or cer) to use to connect via ldaps to directory.
+  -L  LDAP Hostname used to name certificate file download output.
 
 EOT
 }  # ----------  end of function usage  ----------
 
 # Define default values
-SECRET_URI=
 CERTIFICATE_URI=
+LDAP_HOSTNAME=
 
 # Parse command-line parameters
-while getopts :hS:C: opt
+while getopts :hC:L: opt
 do
     case "${opt}" in
         h)
             usage
             exit 0
             ;;
-        S)
-            SECRET_URI="${OPTARG}"
-            ;;
         C)
             CERTIFICATE_URI="${OPTARG}"
+            ;;
+        L)
+            LDAP_HOSTNAME="${OPTARG}"
             ;;
         \?)
             usage
@@ -88,7 +88,6 @@ fi
 # login
 az cloud set --name $azloginenvname
 az login --identity
-
 if [[ $? -eq 0 ]]
 then
     log "Successfully logged in using MSI"
@@ -97,12 +96,7 @@ then
     die "Failed to login using MSI. Aborting..."
 fi
 
-# get secret
-sudo yum -y install jq
-secretjson=$(az keyvault secret show --id ${SECRET_URI})
-secretvalue=$(jq -r .value <<< $secretjson)
-
-#break up url into parts
+#break up certificate url into parts
 urlstring=${CERTIFICATE_URI}
 slashseparator="/"
 tmp=${urlstring//"$slashseparator"/$'\2'}
@@ -123,22 +117,11 @@ if [ $storageservice == blob ]
 then 
     # get blob 
     # be sure Managed Identity has been granted Storage Blob Data Reader IAM Role to storage account
-    az storage blob download --container-name ${containerorsharename} --file /usr/local/bin/cert.zip --name ${filename}  --account-name ${storageaccountname} --auth-mode login
+    az storage blob download --container-name ${containerorsharename} --file "${LDAP_HOSTNAME}.cer" --name ${filename}  --account-name ${storageaccountname} --auth-mode login
 elif [ $storageservice == file ]
 then
     # get file
     # be sure Managed Identity has been granted Reader and Storage Account Key Operator Service Role IAM Roles to storage account
-    az storage file download --path ${filename} --share-name ${containerorhsharename} --dest /usr/local/bin/cert.zip --account-name ${storageaccountname}
+    az storage file download --path ${filename} --share-name ${containerorhsharename} --dest "${LDAP_HOSTNAME}.cer" --account-name ${storageaccountname}
 fi
 
-#unzip blob using secret
-sudo yum -y install p7zip
-cd /usr/local/bin
-7za e -p"${secretvalue}" /usr/local/bin/cert.zip 
-
-# adjust /etc/httpd/conf.d/ssl.conf
-sed -i.certfilebak "s|SSLCertificateFile.*|SSLCertificateFile /usr/local/bin/cert.crt|g" /etc/httpd/conf.d/ssl.conf
-sed -i.keyfilebak "s|SSLCertificateKeyFile.*|SSLCertificateKeyFile /usr/local/bin/cert.key|g" /etc/httpd/conf.d/ssl.conf
-
-# restart httpd
-service httpd restart

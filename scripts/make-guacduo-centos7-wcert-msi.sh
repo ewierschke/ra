@@ -409,7 +409,9 @@ log "Clean yum cache"
 retry 5 yum clean all
 
 log "Installing EPEL repo"
-retry 2 yum -y install epel-release
+retry 2 yum -y install epel-release 
+retry 2 yum -y install yum-utils
+yum-config-manager --enable epel
 # Validate parameters
 if [ -n "${LDAP_HOSTNAME}" ]
 then
@@ -754,9 +756,22 @@ then
         then
             # Install LDAPS certificate not in public chain
             log "Downloading cert for LDAP Hostname not in public chain"
-            retry 5 wget --timeout=10 \
-            "${LDAP_CERT}" -O "${LDAP_HOSTNAME}.cer" || \
-            die "Could not download ldap cert"
+            one=1
+            if ( [[ "${USE_MSI}" == "${one}" ]] )
+                #get real certificate zip and configure httpd
+                log "Using MSI to download ldaps certificate"
+                CERT_MSI_SCRIPT=https://raw.githubusercontent.com/ewierschke/ra/wip/scripts/msi-get-ldaps-pub-cert.sh
+                retry 5 wget --timeout=10 \
+                "${CERT_MSI_SCRIPT}" -O /usr/local/bin/msi-get-ldaps-pub-cert.sh || \
+                die "Could not download msi ldaps script file" 
+                chmod 755 /usr/local/bin/msi-get-ldaps-pub-cert.sh
+                bash /usr/local/bin/msi-get-ldaps-pub-cert.sh -C ${LDAP_CERT} -L ${LDAP_HOSTNAME} 
+            elif ( [[ "${USE_MSI}" -ne "${one}" ]] )
+                log "Not using MSI to download ldaps certificate"
+                retry 5 wget --timeout=10 \
+                "${LDAP_CERT}" -O "${LDAP_HOSTNAME}.cer" || \
+                die "Could not download ldap cert from provided url"
+            fi
             log "Adding LDAP Cert to tomcat cacerts"
             #centos7 path to cacerts file, other OS may differ, may be able to remove if update-ca-trust works below
             keytool -import -trustcacerts -keystore /etc/pki/ca-trust/extracted/java/cacerts -storepass changeit -noprompt -alias "${LDAP_HOSTNAME}" -file "${LDAP_HOSTNAME}.cer"
@@ -1002,7 +1017,7 @@ then
     CERT_MSI_SCRIPT=https://raw.githubusercontent.com/ewierschke/ra/wip/scripts/msi-get-cert-and-password-for-httpd.sh
     retry 5 wget --timeout=10 \
     "${CERT_MSI_SCRIPT}" -O /usr/local/bin/msi-get-cert-and-password-for-httpd.sh || \
-    die "Could not download msi script file" 
+    die "Could not download msi httpd cert script file" 
     chmod 755 /usr/local/bin/msi-get-cert-and-password-for-httpd.sh
     bash /usr/local/bin/msi-get-cert-and-password-for-httpd.sh -C ${CERTIFICATE_ZIP_URL} -S ${CERTIFICATE_KV_SECRET_URI} 
 else
