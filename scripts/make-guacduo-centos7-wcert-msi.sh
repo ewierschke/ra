@@ -476,7 +476,7 @@ if [ -n "${DUO_API_HOSTNAME}" ]
 then
     if [ -z "${DUO_APPKEY}" ]
     then
-        log "DUO API Hostname was provided (-d), but an application key was (-K), assuming new/standalone instance"
+        log "DUO API Hostname was provided (-d), but an application key was not (-K), assuming new/standalone instance, creating random application key"
         yum -y install pwgen
         DUO_APPKEY="$(pwgen 40 1)" 
     fi
