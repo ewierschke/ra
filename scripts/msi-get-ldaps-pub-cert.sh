@@ -122,6 +122,6 @@ elif [ $storageservice == file ]
 then
     # get file
     # be sure Managed Identity has been granted Reader and Storage Account Key Operator Service Role IAM Roles to storage account
-    az storage file download --path ${filename} --share-name ${containerorhsharename} --dest "${LDAP_HOSTNAME}.cer" --account-name ${storageaccountname}
+    az storage file download --path ${filename} --share-name ${containerorsharename} --dest "${LDAP_HOSTNAME}.cer" --account-name ${storageaccountname}
 fi
 
