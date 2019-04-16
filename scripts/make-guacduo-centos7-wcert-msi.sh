@@ -766,7 +766,7 @@ then
                 die "Could not download msi ldaps script file" 
                 chmod 755 /usr/local/bin/msi-get-ldaps-pub-cert.sh
                 bash /usr/local/bin/msi-get-ldaps-pub-cert.sh -C ${LDAP_CERT} -L ${LDAP_HOSTNAME} 
-            elif ( [[ "${USE_MSI}" -ne "${one}" ]] )
+            elif ( [[ "${USE_MSI}" != "${one}" ]] )
                 log "Not using MSI to download ldaps certificate"
                 retry 5 wget --timeout=10 \
                 "${LDAP_CERT}" -O "${LDAP_HOSTNAME}.cer" || \
