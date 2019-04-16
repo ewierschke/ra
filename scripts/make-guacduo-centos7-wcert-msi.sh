@@ -758,6 +758,7 @@ then
             log "Downloading cert for LDAP Hostname not in public chain"
             one=1
             if ( [[ "${USE_MSI}" == "${one}" ]] )
+            then
                 #get real certificate zip and configure httpd
                 log "Using MSI to download ldaps certificate"
                 CERT_MSI_SCRIPT=https://raw.githubusercontent.com/ewierschke/ra/wip/scripts/msi-get-ldaps-pub-cert.sh
@@ -767,6 +768,7 @@ then
                 chmod 755 /usr/local/bin/msi-get-ldaps-pub-cert.sh
                 bash /usr/local/bin/msi-get-ldaps-pub-cert.sh -C ${LDAP_CERT} -L ${LDAP_HOSTNAME} 
             elif ( [[ "${USE_MSI}" != "${one}" ]] )
+            then
                 log "Not using MSI to download ldaps certificate"
                 retry 5 wget --timeout=10 \
                 "${LDAP_CERT}" -O "${LDAP_HOSTNAME}.cer" || \
