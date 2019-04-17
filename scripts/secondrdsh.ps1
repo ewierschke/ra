@@ -88,7 +88,7 @@ function Set-OutputBuffer($Width=10000) {
 New-Item -Path $SecondRDSHDir -ItemType "directory" -Force 2>&1 > $null
 New-Item -Path $SecondRDSHLogDir -ItemType "directory" -Force 2>&1 > $null
 $OSver = (Get-CimInstance Win32_OperatingSystem).version
-if ($OSver.Major -lt 10)
+if ($OSver -lt 10)
 {
      # Increase the screen width to avoid line wraps in the log file
      Set-OutputBuffer -Width 10000
@@ -118,7 +118,7 @@ Invoke-Webrequest "${getscript}" -Outfile "${SecondRDSHDir}\${nextscript}.ps1";
 # Do the work
 $OSver = (Get-CimInstance Win32_OperatingSystem).version
 #Server 2012 R2
-if ($OSver.Major -lt 10)
+if ($OSver -lt 10)
 {
 
      # Add Windows features
@@ -132,7 +132,7 @@ if ($OSver.Major -lt 10)
      )
 }
 #Server 2016+
-if ($OSver.Major -gt 10)
+if ($OSver -gt 10)
 {
     $RequiredFeatures = @(
         "RDS-RD-Server"
