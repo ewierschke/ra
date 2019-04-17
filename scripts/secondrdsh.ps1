@@ -65,7 +65,7 @@ function Set-OutputBuffer($Width=10000) {
            "hkcu:\console\%SystemRoot%_SysWOW64_WindowsPowerShell_v1.0_powershell.exe")
     # other titles are ignored
     foreach ($key in $keys) {
-        md $key -verbose -force
+        mkdir $key -verbose -force
         Set-RegistryValue $key FontSize 0x00050000
         Set-RegistryValue $key ScreenBufferSize 0x02000200
         Set-RegistryValue $key WindowSize 0x00200200
