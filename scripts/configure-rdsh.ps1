@@ -207,7 +207,7 @@ if ($OSver -lt 10)
      # Add Windows features
      $null = Install-WindowsFeature @(
          "RDS-RD-Server"
-         "RDS-Licensing"
+    #     "RDS-Licensing"
          "Search-Service"
          "Desktop-Experience"
          "RSAT-ADDS-Tools"
@@ -219,7 +219,7 @@ if ($OSver -gt 10)
 {
     $RequiredFeatures = @(
         "RDS-RD-Server"
-        "RDS-Licensing"
+    #    "RDS-Licensing"
     )
     
     $ExtraFeatures = @(
@@ -275,9 +275,10 @@ if ($ActivationStatus.CurrentValue -eq 0)
 {
     Set-Item -Path RDS:\LicenseServer\ActivationStatus -Value 1 -ConnectionMethod AUTO -Reason 5 -ErrorAction Stop
 }
-$obj = Get-WmiObject -namespace "Root/CIMV2/TerminalServices" Win32_TerminalServiceSetting
-$null = $obj.SetSpecifiedLicenseServerList("localhost")
-$null = $obj.ChangeMode(2)
+# Removed b/c domain GPO setting licensing 
+#$obj = Get-WmiObject -namespace "Root/CIMV2/TerminalServices" Win32_TerminalServiceSetting
+#$null = $obj.SetSpecifiedLicenseServerList("localhost")
+#$null = $obj.ChangeMode(2)
 
 # Grant remote access privileges to domain group
 if ($DomainNetBiosName -and $GroupName)
