@@ -280,6 +280,9 @@ if ($ActivationStatus.CurrentValue -eq 0)
 #$null = $obj.SetSpecifiedLicenseServerList("localhost")
 #$null = $obj.ChangeMode(4)
 
+#new approach to set licensing mode to per user
+Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\RCM\Licensing Core' -Name 'LicensingMode' -Value '4'
+
 # Grant remote access privileges to domain group
 if ($DomainNetBiosName -and $GroupName)
 {
@@ -335,6 +338,10 @@ $SignOffShortcut.Save()
 #. { iwr -useb http://boxstarter.org/bootstrapper.ps1 } | iex; get-boxstarter -Force
 #Enable-MicrosoftUpdate
 #Install-WindowsUpdate -SuppressReboots -AcceptEula
+
+#Expand C drive partition (partition 2) to fill available disk 0 size
+$size = (Get-PartitionSupportedSize -DiskNumber 0 -PartitionNumber 2)
+Resize-Partition -DiskNumber 0 -PartitionNumber 2 -Size $size.SizeMax
 
 # Remove previous scheduled task
 log -LogTag ${ScriptName} "UnRegistering previous scheduled task"
