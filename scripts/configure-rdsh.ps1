@@ -275,10 +275,10 @@ if ($ActivationStatus.CurrentValue -eq 0)
 {
     Set-Item -Path RDS:\LicenseServer\ActivationStatus -Value 1 -ConnectionMethod AUTO -Reason 5 -ErrorAction Stop
 }
-# Removed localhost licenseserver and set to 4 for Per User
-$obj = Get-WmiObject -namespace "Root/CIMV2/TerminalServices" Win32_TerminalServiceSetting
+# Removed when using remote license server
+#$obj = Get-WmiObject -namespace "Root/CIMV2/TerminalServices" Win32_TerminalServiceSetting
 #$null = $obj.SetSpecifiedLicenseServerList("localhost")
-$null = $obj.ChangeMode(4)
+#$null = $obj.ChangeMode(4)
 
 # Grant remote access privileges to domain group
 if ($DomainNetBiosName -and $GroupName)
