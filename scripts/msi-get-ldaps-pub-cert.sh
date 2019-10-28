@@ -105,6 +105,12 @@ hostname=${arr[2]}
 containerorsharename=${arr[3]}
 filename=${arr[4]}
 
+#break up filename to get element before questionmark if sas was passed in
+questionseparator="?"
+tmp=${filename//"$questionseparator"/$'\2'}
+IFS=$'\2' read -a arr <<< "$tmp"
+filename=${arr[0]}
+
 #find storage service (blob v file) and storage account name
 hostnamestring=${hostname}
 dotseparator="."
