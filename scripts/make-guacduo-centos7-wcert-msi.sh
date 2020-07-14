@@ -494,7 +494,7 @@ GUAC_SOURCE="https://archive.apache.org/dist/guacamole/"${GUAC_VERSION}"/source/
 GUAC_BINARY="https://archive.apache.org/dist/guacamole/"${GUAC_VERSION}"/binary/"
 GUAC_EXTENSIONS="https://archive.apache.org/dist/guacamole/"${GUAC_VERSION}"/binary/"
 FREERDP_REPO="https://github.com/FreeRDP/FreeRDP"
-FREERDP_BRANCH="stable-1.1"
+FREERDP_BRANCH="stable-2.0"
 ADDUSER="/usr/sbin/useradd"
 MODUSER="/usr/sbin/usermod"
 
